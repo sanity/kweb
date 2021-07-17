@@ -26,6 +26,7 @@ typealias Cleaner = () -> Unit
 open class ElementCreator<out PARENT_TYPE : Element>(
     val parent: PARENT_TYPE,
     val parentCreator: ElementCreator<*>? = parent.creator,
+    val namespace : String? = parentCreator?.namespace,
     val position: Int? = null
 ) {
 
@@ -66,6 +67,10 @@ open class ElementCreator<out PARENT_TYPE : Element>(
 
         val id: String = mutAttributes.computeIfAbsent("id") { JsonPrimitive("K" + browser.generateId()) }.content
         val htmlDoc = browser.htmlDocument.get()
+        val createElementStatement = when(namespace) {
+            null -> "document.createElement(tag);"
+            else -> "document.createElementNS(\"${namespace}\", tag);"
+        }
         when {
             parent.browser.isCatchingOutbound() != null -> {
                 //language=JavaScript
@@ -75,7 +80,7 @@ open class ElementCreator<out PARENT_TYPE : Element>(
                     let myId = {};
                     let parentId = {};
                     let position = {};
-                    let newEl = document.createElement(tag);
+                    let newEl = $createElementStatement
                     newEl.setAttribute("id", myId);
                     for (const key in attributes) {
                         if ( key !== "id") {

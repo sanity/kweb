@@ -575,10 +575,15 @@ open class Element(
 /**
  * A convenience wrapper around [new] which allows a nested DSL-style syntax
  *
- * @Param position What position among the parent's children should the new element have?
+ * @param position What position among the parent's children should the new element have?
+ * @param namespace If non-null elements will be created with [Document.createElementNS()](https://developer.mozilla.org/en-US/docs/Web/API/Document/createElementNS)
+ *                  with the specified namespace. Child elements will inherit their parent's namespace. If this is null
+ *                  then Kweb will use [Document.createElement](https://developer.mozilla.org/en-US/docs/Web/API/Document/createElement).
+ * @param receiver A code block in which any created elements will be children of this element.
  */
 fun <ELEMENT_TYPE : Element, RETURN_VALUE_TYPE> ELEMENT_TYPE.new(
     position: Int? = null,
+    namespace : String? = null,
     receiver: ElementCreator<ELEMENT_TYPE>.() -> RETURN_VALUE_TYPE
 )
         : RETURN_VALUE_TYPE {
@@ -591,7 +596,7 @@ fun <ELEMENT_TYPE : Element, RETURN_VALUE_TYPE> ELEMENT_TYPE.new(
          *           [ElementCreator]
          * @Param position What position among the parent's children should the new element have?
          */
-        ElementCreator(parent = this, position = position)
+        ElementCreator(parent = this, position = position, namespace = namespace ?: this.creator?.namespace)
     )
 }
 

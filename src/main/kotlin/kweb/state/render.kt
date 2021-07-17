@@ -168,7 +168,7 @@ private fun <ITEM : Any, EL : Element> ElementCreator<EL>.createItem(
     insertAtPosition: Int?
 )
         : ItemInfo<ITEM> {
-    val itemElementCreator = ElementCreator(this.parent, this, insertAtPosition)
+    val itemElementCreator = ElementCreator(this.parent, this, position = insertAtPosition)
     val itemVar = itemElementCreator.toVar(orderedViewSet.view.viewOf, keyValue.key)
     try {
         renderer(itemElementCreator, itemVar)
